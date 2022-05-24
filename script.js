@@ -9,7 +9,7 @@ async function getInfos(withIP = true) {
     let timezone;
 
     if(withIP) {
-    infos = await fetch('http://ip-api.com/json/')
+    infos = await fetch('https://ip-api.com/json/')
     .then((response) => response.json())
     .then((jsonResponse) => jsonResponse)
 
@@ -18,7 +18,7 @@ async function getInfos(withIP = true) {
     .then(json => json.location.timezone)
 
     } else {
-      infos = await fetch(`http://ip-api.com/json/${ip}`)
+      infos = await fetch(`https://ip-api.com/json/${ip}`)
           .then((response) => response.json())
           .then((jsonResponse) => jsonResponse)
 
