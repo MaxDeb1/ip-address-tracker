@@ -1,0 +1,10 @@
+.infos-container > *:not(:last-child)::after {
+    content: "";
+    height: 45%;
+    width: 1px;
+    position: absolute;
+    right: 0;
+    top: 27.5%;
+    background-color: hsl(0, 0%, 59%);
+    opacity: 0.5;
+}
