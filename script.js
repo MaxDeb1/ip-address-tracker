@@ -9,16 +9,16 @@ async function getInfos(withIP = true) {
     let timezone;
 
     if(withIP) {
-    infos = await fetch('https://ipinfo.io/json?token=4e136a7521249b')
+    infos = await fetch('http://ip-api.com/json/')
     .then((response) => response.json())
     .then((jsonResponse) => jsonResponse)
 
-    timezone = await fetch(`https://geo.ipify.org/api/v2/country?apiKey=at_zX0wbwU506D4z2TgRQZkvwQm6zYaK&ipAddress=${infos.ip}`)
+    timezone = await fetch(`https://geo.ipify.org/api/v2/country?apiKey=at_zX0wbwU506D4z2TgRQZkvwQm6zYaK&ipAddress=${infos.query}`)
     .then(resultat => resultat.json())
     .then(json => json.location.timezone)
 
     } else {
-      infos = await fetch(`https://ipinfo.io/${ip}?token=4e136a7521249b`)
+      infos = await fetch(`http://ip-api.com/json/${ip}`)
           .then((response) => response.json())
           .then((jsonResponse) => jsonResponse)
 
@@ -26,15 +26,16 @@ async function getInfos(withIP = true) {
           .then(resultat => resultat.json())
           .then(json => json.location.timezone)
     }
-    
+    console.log(infos);
+  
     displayInfos(infos, timezone)
     getMap(infos)
 }
 
 function displayInfos(infos, timezone) {
-    let ip = infos.ip;
+    let ip = infos.query;
     let location = infos.city;
-    let isp = infos.org;
+    let isp = infos.isp;
 
     document.getElementById("ip-address").textContent = ip;
     document.getElementById("location").textContent = location;
@@ -49,15 +50,13 @@ function initializingMap() {
     }
 }
 
-function getMap(data) {
+function getMap(infos) {
     initializingMap()
 
-    let loc = data.loc.split(/[\s,]+/)
-    console.log(loc);
-    let lng = loc[0]
-    let lat = loc[1];
+    let lng = infos.lon;
+    let lat = infos.lat;
 
-    map = L.map('map', { zoomControl: false }).setView([lng, lat], 16);
+    map = L.map('map', { zoomControl: false, scrollWheelZoom: false }).setView([lat, lng], 13);
     
     var tiles = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
         maxZoom: 18,
@@ -70,10 +69,9 @@ function getMap(data) {
 
     var markerIcon = L.icon({
         iconUrl: './images/icon-location.svg',
-        iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
     });
 
-    L.marker([lng, lat], {icon: markerIcon}).addTo(map);
+    L.marker([lat, lng], {icon: markerIcon}).addTo(map);
 }
 
 submitBtn.addEventListener('click', () => {
